@@ -1,0 +1,1 @@
+En session graphique, il faut lancer la vm, entre le nom de l'utilisateur, puis son mot de passe. en session ssh, il faut entre la commande suivante dans un terminal : ssh [nom-de-l'utilisateur@adresse-ip-de-la-machine, suivi du mot de passe

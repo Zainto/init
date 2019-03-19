@@ -1,0 +1,1 @@
+ps aux ; echo "ces services sont appeles des daemons"

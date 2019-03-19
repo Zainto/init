@@ -1,0 +1,57 @@
+#!/bin/zsh
+
+#Debian64 VM Setup
+
+#Get VM Name
+echo "VM Name ? "
+
+read vmname
+
+#Set VM Path
+vmpath="/sgoinfre/goinfre/Perso/$USER/$vmname"
+
+#Create VM in path
+echo "creating dir $vmpath"
+
+mkdir -p $vmpath
+
+VBoxManage createvm --name $vmname --basefolder $vmpath --ostype Debian_64 --register
+
+#Setup Network
+VBoxManage modifyvm $vmname --bridgeadapter1 vmnet1
+
+VBoxManage modifyvm $vmname --nic1 bridged
+
+#Get Hard drive name and size
+echo "Hard Drive name?"
+
+read vmhd
+
+echo "Hard Drive Size?"
+
+read vmhdsize
+
+#Create Hard Drive
+VBoxManage createhd --filename $vmpath/$vmhd.vdi --size $vmhdsize
+
+#Create Storage Controller
+VBoxManage storagectl "$vmname" --name "SATA Controller" --add sata --hostiocache on --bootable on --controller IntelAhci
+
+#Attach Storage to VM
+VBoxManage storageattach $vmname --storagectl "SATA Controller" --port 0 --device 0 --type hdd --medium $vmpath/$vmhd.vdi
+
+#Create IDE Controller
+VBoxManage storagectl $vmname --name "IDE Controller" --add ide --controller PIIX4
+
+#Get Debian 64 image and mount it
+echo "Path to Debian Image ?"
+
+read -e debian_iso_path
+
+VBoxManage storageattach $vmname --storagectl 'IDE Controller' --port 1 --device 0 --type dvddrive --medium $debian_iso_path
+
+#Set ram and boot devices
+
+VBoxManage modifyvm $vmname --memory 2048 
+
+VBoxManage startvm $vmname
